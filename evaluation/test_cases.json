@@ -83,16 +83,16 @@
     "id": "Q11",
     "category": "hybrid",
     "difficulty": "complexe",
-    "question": "Les statistiques disponibles confirment-elles les commentaires positifs sur les Minnesota Timberwolves ?",
-    "reference": "",
-    "expected_source": "Reddit 1.pdf + regular NBA.xlsx"
+    "question": "Quels joueurs des Minnesota Timberwolves sont mis en avant par les commentateurs et que montrent leurs statistiques individuelles disponibles ?",
+    "reference": "Les commentateurs mettent notamment en avant Anthony Edwards et Julius Randle. Dans les données statistiques, Anthony Edwards totalise 2180 points, 450 rebonds et 356 passes en 79 matchs, avec 39,5 % à trois points, un TS% de 59,5 et un NETRTG de +4,8. Julius Randle totalise 1290 points, 490 rebonds et 324 passes en 69 matchs, avec un TS% de 59,3 et un NETRTG de +3,4.",
+    "expected_source": "commentateurs_1.pdf + regular NBA (2).xlsx"
   },
   {
     "id": "Q12",
     "category": "hybrid",
     "difficulty": "complexe",
-    "question": "Compare ce que disent les commentateurs sur Orlando avec les statistiques disponibles pour ses joueurs.",
-    "reference": "",
-    "expected_source": "Reddit 1.pdf + regular NBA.xlsx"
+    "question": "Quels joueurs du Orlando Magic sont mis en avant par les commentateurs et que montrent leurs statistiques individuelles disponibles ?",
+    "reference": "Les commentateurs mettent notamment en avant Paolo Banchero et Franz Wagner, tout en évoquant les difficultés offensives du Magic. Dans les données statistiques, Franz Wagner totalise 1452 points, 342 rebonds et 282 passes en 60 matchs, avec un TS% de 55,8 et un NETRTG de +6,0. Paolo Banchero totalise 1191 points, 345 rebonds et 221 passes en 46 matchs, avec un TS% de 55,1 et un NETRTG de -0,6.",
+    "expected_source": "commentateurs_1.pdf + regular NBA (2).xlsx"
   }
 ]
