@@ -1,0 +1,98 @@
+[
+  {
+    "id": "Q01",
+    "category": "text_simple",
+    "difficulty": "simple",
+    "question": "Quelles équipes ont impressionné les commentateurs pendant les playoffs ?",
+    "reference": "Les Minnesota Timberwolves sont régulièrement cités, notamment pour leur jeu collectif, leur défense et les performances d'Anthony Edwards et Julius Randle. Le Orlando Magic impressionne également certains commentateurs malgré ses difficultés offensives. Les Detroit Pistons et les Indiana Pacers sont aussi mentionnés positivement.",
+    "expected_source": "commentateurs_1.pdf"
+  },
+  {
+    "id": "Q02",
+    "category": "text_complex",
+    "difficulty": "complexe",
+    "question": "Pourquoi certains fans pensent-ils qu'une finale entre les Pacers et le Thunder pourrait être moins suivie ?",
+    "reference": "Certains commentateurs évoquent principalement la taille plus faible des marchés d'Indiana et d'Oklahoma City, l'absence de très grandes stars bénéficiant d'une forte notoriété auprès du grand public et la manière dont la NBA et les médias font leur promotion. D'autres contestent cette idée et estiment que la qualité du basket et la compétitivité de la série peuvent suffire à la rendre intéressante.",
+    "expected_source": "commentateurs_2.pdf"
+  },
+  {
+    "id": "Q03",
+    "category": "text_complex",
+    "difficulty": "complexe",
+    "question": "Pourquoi Reggie Miller est-il présenté comme une première option particulièrement efficace en playoffs ?",
+    "reference": "La discussion s'appuie principalement sur son True Shooting relatif, qui montre une forte efficacité au scoring par rapport à la moyenne de son époque. Les commentateurs soulignent aussi son jeu sans ballon et sa capacité à produire efficacement en playoffs, tout en débattant de la pertinence de le considérer comme une véritable première option comparable aux plus grandes stars.",
+    "expected_source": "commentateurs_3.pdf"
+  },
+  {
+    "id": "Q04",
+    "category": "text_complex",
+    "difficulty": "complexe",
+    "question": "Une équipe NBA a-t-elle déjà joué les trois premiers tours sans avantage du terrain avant de l'obtenir en Finales ?",
+    "reference": "D'après les commentaires du corpus, cela ne semble jamais s'être produit en NBA. Plusieurs équipes ont atteint les Finales sans avantage du terrain, comme les Rockets de 1995 ou les Knicks de 1999, mais elles ne l'ont pas ensuite obtenu en Finales.",
+    "expected_source": "commentateurs_4.pdf"
+  },
+  {
+    "id": "Q05",
+    "category": "text_noisy",
+    "difficulty": "simple",
+    "question": "pk les wolves ont impressioné pendant les playoff ?",
+    "reference": "Les commentateurs mettent notamment en avant leur intensité physique, leur défense, leur profondeur d'effectif et leur jeu collectif. Anthony Edwards est régulièrement cité, tandis que Julius Randle reçoit aussi des éloges pour son apport offensif et son implication défensive.",
+    "expected_source": "commentateurs_1.pdf"
+  },
+  {
+    "id": "Q06",
+    "category": "out_of_scope",
+    "difficulty": "simple",
+    "question": "Quel joueur a remporté le Ballon d'Or de football en 2024 ?",
+    "reference": "Cette information n'est pas présente dans les sources fournies.",
+    "expected_source": null
+  },
+  {
+    "id": "Q07",
+    "category": "numeric_simple",
+    "difficulty": "simple",
+    "question": "Quel joueur ayant tenté au moins 100 tirs à 3 points possède le meilleur pourcentage de réussite à 3 points ?",
+    "reference": "Seth Curry possède le meilleur pourcentage de réussite à 3 points parmi les joueurs ayant tenté au moins 100 tirs à 3 points, avec 45,6 % sur 184 tentatives.",
+    "expected_source": "regular NBA (2).xlsx"
+  },
+  {
+    "id": "Q08",
+    "category": "numeric_simple",
+    "difficulty": "simple",
+    "question": "Quel joueur ayant disputé au moins 50 matchs possède le meilleur True Shooting Percentage ?",
+    "reference": "Jarrett Allen possède le meilleur True Shooting Percentage parmi les joueurs ayant disputé au moins 50 matchs, avec 72,4 % en 82 matchs.",
+    "expected_source": "regular NBA (2).xlsx"
+  },
+  {
+    "id": "Q09",
+    "category": "numeric_complex",
+    "difficulty": "complexe",
+    "question": "Quels sont les cinq joueurs ayant tenté au moins 100 tirs à 3 points avec le meilleur pourcentage de réussite à 3 points ?",
+    "reference": "Les cinq meilleurs sont Seth Curry avec 45,6 %, Zach LaVine avec 44,6 %, Taurean Prince avec 43,9 %, Ty Jerome avec 43,9 % et Vít Krejčí avec 43,7 %.",
+    "expected_source": "regular NBA (2).xlsx"
+  },
+  {
+    "id": "Q10",
+    "category": "numeric_complex",
+    "difficulty": "complexe",
+    "question": "Parmi les joueurs ayant disputé au moins 50 matchs, quels sont les cinq joueurs ayant le meilleur NETRTG ?",
+    "reference": "Les cinq joueurs ayant le meilleur NETRTG sont Shai Gilgeous-Alexander avec 16,7, Isaiah Joe avec 15,8, Alex Caruso avec 15,0, Luke Kornet avec 14,9 et Kenrich Williams avec 14,5.",
+    "expected_source": "regular NBA (2).xlsx"
+  },
+  {
+    "id": "Q11",
+    "category": "hybrid",
+    "difficulty": "complexe",
+    "question": "Les statistiques disponibles confirment-elles les commentaires positifs sur les Minnesota Timberwolves ?",
+    "reference": "",
+    "expected_source": "Reddit 1.pdf + regular NBA.xlsx"
+  },
+  {
+    "id": "Q12",
+    "category": "hybrid",
+    "difficulty": "complexe",
+    "question": "Compare ce que disent les commentateurs sur Orlando avec les statistiques disponibles pour ses joueurs.",
+    "reference": "",
+    "expected_source": "Reddit 1.pdf + regular NBA.xlsx"
+  }
+]
