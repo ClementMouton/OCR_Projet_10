@@ -7,7 +7,7 @@ import logging
 from typing import List, Dict, Tuple, Optional
 from mistralai.client import MistralClient
 from mistralai.exceptions import MistralAPIException
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.documents import Document # Utilisé pour le format attendu par le splitter
 
 from .config import (
