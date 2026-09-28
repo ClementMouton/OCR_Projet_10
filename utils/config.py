@@ -44,6 +44,9 @@ SEARCH_K = int(os.getenv("SEARCH_K", "5"))
 
 DATABASE_DIR = os.getenv("DATABASE_DIR", "database")
 
+NBA_DATABASE_FILE = os.path.join(DATABASE_DIR, "nba.db")
+NBA_DATABASE_URL = f"sqlite:///{NBA_DATABASE_FILE}"
+
 DATABASE_FILE = os.getenv(
     "DATABASE_FILE",
     os.path.join(DATABASE_DIR, "interactions.db")

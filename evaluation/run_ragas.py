@@ -61,7 +61,7 @@ def main():
         "chargées depuis la baseline."
     )
 
-    dataset = prepare_dataset([baseline_results[0]])  # On ne prend que le premier test case pour l'instant
+    dataset = prepare_dataset(baseline_results)  # On ne prend que le premier test case pour l'instant
 
     evaluator_llm = LangchainLLMWrapper(
         ChatMistralAI(
@@ -79,14 +79,10 @@ def main():
     )
 
     metrics = [
-        #Faithfulness(),
-        ResponseRelevancy(
-            llm=evaluator_llm,
-            embeddings=evaluator_embeddings,
-            strictness=3,
-        ),
-        #LLMContextPrecisionWithReference(),
-        #LLMContextRecall(),
+        Faithfulness(),
+        ResponseRelevancy(),
+        LLMContextPrecisionWithReference(),
+        LLMContextRecall(),
     ]
 
     result = evaluate(
@@ -94,7 +90,6 @@ def main():
         metrics=metrics,
         llm=evaluator_llm,
         embeddings=evaluator_embeddings,
-        raise_exceptions=True,
     )
 
     print("\n=== Scores moyens ===")
