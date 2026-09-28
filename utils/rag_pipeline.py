@@ -160,56 +160,302 @@ class RAGPipeline:
     # ========================================================
 
     def route_question(self, question: str) -> str:
+        """
+        Détermine quelle source doit être utilisée pour répondre.
 
-        prompt = ROUTER_PROMPT.format(
-            question=question
-        )
+        Routes possibles :
+        - rag : documents textuels non structurés
+        - sql : statistiques NBA structurées
+        - hybrid : combinaison documents + statistiques
+        - out_of_scope : question hors du périmètre NBA
+        """
+
+        prompt = f"""
+    Tu es le routeur d'un système de question-réponse spécialisé
+    sur la NBA.
+
+    Tu dois classer la question de l'utilisateur dans UNE SEULE
+    des quatre catégories suivantes :
+
+    RAG
+    SQL
+    HYBRID
+    OUT_OF_SCOPE
+
+
+    ============================================================
+    1. RAG
+    ============================================================
+
+    Choisis RAG lorsque la réponse doit être recherchée dans les
+    documents textuels du corpus.
+
+    Cela concerne notamment :
+
+    - commentaires de fans ;
+    - opinions ;
+    - débats ;
+    - réactions ;
+    - explications présentes dans les documents ;
+    - discussions sur les playoffs ;
+    - faits ou événements NBA décrits dans les documents ;
+    - questions historiques NBA lorsque les statistiques de la
+    base structurée actuelle ne permettent pas d'y répondre.
+
+    IMPORTANT :
+
+    La simple présence du nom d'un joueur ou d'une équipe ne
+    justifie PAS l'utilisation de SQL.
+
+    Exemples :
+
+    Question :
+    Quelles équipes ont impressionné les commentateurs pendant
+    les playoffs ?
+
+    Route :
+    RAG
+
+
+    Question :
+    Pourquoi certains fans pensent-ils qu'une finale entre les
+    Pacers et le Thunder pourrait être moins suivie ?
+
+    Route :
+    RAG
+
+
+    Question :
+    Pourquoi Reggie Miller est-il présenté comme une première
+    option particulièrement efficace en playoffs ?
+
+    Route :
+    RAG
+
+
+    Question :
+    Une équipe NBA a-t-elle déjà joué les trois premiers tours
+    sans avantage du terrain avant de l'obtenir en Finales ?
+
+    Route :
+    RAG
+
+
+    Question :
+    Pourquoi les Wolves ont-ils impressionné pendant les
+    playoffs ?
+
+    Route :
+    RAG
+
+
+    ============================================================
+    2. SQL
+    ============================================================
+
+    Choisis SQL UNIQUEMENT lorsque la question peut être résolue
+    à partir des statistiques individuelles de la saison NBA
+    présentes dans la base structurée.
+
+    La base contient notamment :
+
+    - joueur ;
+    - équipe ;
+    - matchs joués ;
+    - points ;
+    - rebonds ;
+    - passes ;
+    - tentatives à trois points ;
+    - pourcentage à trois points ;
+    - True Shooting Percentage ;
+    - NETRTG.
+
+    SQL est particulièrement adapté aux :
+
+    - classements ;
+    - maximums ou minimums ;
+    - top N ;
+    - filtres numériques ;
+    - seuils ;
+    - comparaisons statistiques ;
+    - recherche d'une valeur statistique.
+
+    Exemples :
+
+    Question :
+    Quel joueur ayant tenté au moins 100 tirs à 3 points possède
+    le meilleur pourcentage de réussite à 3 points ?
+
+    Route :
+    SQL
+
+
+    Question :
+    Quel joueur ayant disputé au moins 50 matchs possède le
+    meilleur True Shooting Percentage ?
+
+    Route :
+    SQL
+
+
+    Question :
+    Quels sont les cinq joueurs ayant tenté au moins 100 tirs à
+    3 points avec le meilleur pourcentage de réussite ?
+
+    Route :
+    SQL
+
+
+    Question :
+    Parmi les joueurs ayant disputé au moins 50 matchs, quels
+    sont les cinq joueurs ayant le meilleur NETRTG ?
+
+    Route :
+    SQL
+
+
+    ============================================================
+    3. HYBRID
+    ============================================================
+
+    Choisis HYBRID uniquement si répondre correctement nécessite
+    À LA FOIS :
+
+    1. des informations provenant des documents textuels ;
+    ET
+    2. des statistiques provenant de la base SQL.
+
+    Les deux sources doivent réellement être nécessaires.
+
+    Ne choisis PAS HYBRID simplement parce qu'un joueur ou une
+    équipe possède des statistiques dans la base.
+
+    Exemples :
+
+    Question :
+    Quels joueurs des Minnesota Timberwolves sont mis en avant
+    par les commentateurs et que montrent leurs statistiques
+    individuelles disponibles ?
+
+    Route :
+    HYBRID
+
+
+    Question :
+    Quels joueurs du Orlando Magic sont mis en avant par les
+    commentateurs et que montrent leurs statistiques
+    individuelles disponibles ?
+
+    Route :
+    HYBRID
+
+
+    ============================================================
+    4. OUT_OF_SCOPE
+    ============================================================
+
+    Choisis OUT_OF_SCOPE lorsque la question n'appartient pas au
+    périmètre NBA du système.
+
+    Cela inclut notamment :
+
+    - football ;
+    - tennis ;
+    - politique ;
+    - cinéma ;
+    - météo ;
+    - sujets sans rapport avec la NBA.
+
+    Exemple :
+
+    Question :
+    Quel joueur a remporté le Ballon d'Or de football en 2024 ?
+
+    Route :
+    OUT_OF_SCOPE
+
+
+    ============================================================
+    RÈGLES IMPORTANTES
+    ============================================================
+
+    Règle 1 :
+    Une question sur une opinion, un commentaire ou un débat
+    doit être RAG, sauf si elle demande explicitement aussi des
+    statistiques.
+
+    Règle 2 :
+    Une question statistique calculable à partir de la base doit
+    être SQL.
+
+    Règle 3 :
+    HYBRID nécessite explicitement les deux types d'information.
+
+    Règle 4 :
+    Une question NBA historique n'est pas automatiquement SQL.
+    La base SQL contient des statistiques de joueurs de la
+    saison actuelle et ne constitue pas une base historique
+    générale.
+
+    Règle 5 :
+    Une question extérieure à la NBA est OUT_OF_SCOPE.
+
+    Règle 6 :
+    Ne déduis pas qu'une question nécessite SQL uniquement parce
+    qu'elle contient le nom d'un joueur ou d'une équipe.
+
+    Réponds UNIQUEMENT avec l'une des quatre valeurs suivantes :
+
+    rag
+    sql
+    hybrid
+    out_of_scope
+
+
+    QUESTION :
+    {question}
+
+    ROUTE :
+    """
 
         messages = [
             ChatMessage(
                 role="user",
-                content=prompt
+                content=prompt,
             )
         ]
 
         response = self.client.chat(
             model=self.model,
             messages=messages,
-            temperature=0
+            temperature=0,
         )
-
-        if not response.choices:
-            raise RuntimeError(
-                "Impossible de déterminer la route de la question."
-            )
 
         route = (
             response.choices[0]
-            .message
-            .content
+            .message.content
             .strip()
             .lower()
         )
 
-        # Nettoyage au cas où le modèle ajoute du Markdown
-        route = route.replace("```", "")
-        route = route.strip()
-
-        if route not in {
+        valid_routes = {
             "rag",
             "sql",
             "hybrid",
-        }:
-            logging.warning(
-                "Route inattendue '%s'. Utilisation de RAG par défaut.",
-                route
-            )
+            "out_of_scope",
+        }
 
+        if route not in valid_routes:
+            logging.warning(
+                "Route invalide retournée par le modèle : %s. "
+                "Fallback vers RAG.",
+                route,
+            )
             route = "rag"
 
         logging.info(
             "Route sélectionnée pour la question : %s",
-            route
+            route,
         )
 
         return route
