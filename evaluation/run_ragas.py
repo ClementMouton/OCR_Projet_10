@@ -80,7 +80,11 @@ def main():
 
     metrics = [
         #Faithfulness(),
-        ResponseRelevancy(),
+        ResponseRelevancy(
+            llm=evaluator_llm,
+            embeddings=evaluator_embeddings,
+            strictness=3,
+        ),
         #LLMContextPrecisionWithReference(),
         #LLMContextRecall(),
     ]
@@ -90,6 +94,7 @@ def main():
         metrics=metrics,
         llm=evaluator_llm,
         embeddings=evaluator_embeddings,
+        raise_exceptions=True,
     )
 
     print("\n=== Scores moyens ===")
