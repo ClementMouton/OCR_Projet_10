@@ -391,6 +391,8 @@ OCR_Projet_10/
 │   ├── faiss_index.idx
 │   └── document_chunks.pkl
 ├── evaluation/
+│   ├── test_cases.json
+│   ├── run_ragas.py
 │   ├── run_ragas_hybrid.py
 │   ├── evaluate_sql.py
 │   └── results/

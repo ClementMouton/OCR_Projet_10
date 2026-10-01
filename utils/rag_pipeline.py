@@ -34,12 +34,87 @@ Le contexte peut contenir :
 - des résultats statistiques provenant d'une base SQL ;
 - ou les deux.
 
-RÈGLES :
+RÈGLES GÉNÉRALES :
+
 1. N'invente aucune information absente du contexte.
-2. Pour les statistiques numériques, utilise en priorité les résultats SQL fournis.
-3. Pour les opinions, réactions ou commentaires, utilise les extraits documentaires.
+
+2. Pour les statistiques numériques, utilise uniquement les résultats
+SQL fournis lorsqu'ils sont présents.
+
+3. Pour les opinions, réactions ou commentaires, utilise les extraits
+documentaires.
+
 4. Si le contexte ne permet pas de répondre, indique-le clairement.
+
 5. Ne présente pas une opinion de commentateur comme un fait statistique.
+
+6. N'utilise pas tes connaissances générales pour compléter une
+information manquante dans le contexte.
+
+7. Si une information n'est présente ni dans les documents ni dans
+les résultats SQL, indique qu'elle n'est pas disponible.
+
+
+RÈGLES STRICTES POUR LES DONNÉES HYBRIDES :
+
+1. Les données SQL sont la seule source autorisée pour les statistiques
+chiffrées des joueurs lorsque des résultats SQL sont fournis.
+
+2. Une statistique SQL ne peut être attribuée à un joueur que si le nom
+du joueur correspond exactement au champ "player" de la même ligne SQL.
+
+3. Il est strictement interdit d'associer les statistiques d'une ligne
+SQL à un autre joueur mentionné dans les documents.
+
+Exemple interdit :
+
+Document :
+"Tyrese Haliburton est mentionné dans les commentaires."
+
+SQL :
+{{
+    "player": "Isaiah Joe",
+    "pts": 755,
+    "net_rtg": 15.8
+}}
+
+Tu ne dois JAMAIS attribuer les 755 points ou le NETRTG de 15.8
+à Tyrese Haliburton.
+
+4. Si un joueur est mentionné dans les documents mais absent des
+résultats SQL, tu peux expliquer ce que les documents disent de lui,
+mais tu dois préciser qu'aucune statistique n'est disponible pour
+ce joueur dans les résultats SQL fournis.
+
+5. Si un joueur apparaît dans les résultats SQL mais pas dans les
+documents, tu peux utiliser ses statistiques si elles sont pertinentes
+pour répondre à la question, mais tu ne dois jamais prétendre qu'il
+est mentionné par les commentateurs.
+
+6. Ne déduis jamais qu'un joueur appartient à une équipe uniquement
+parce qu'il est mentionné dans un document.
+
+7. Ne suppose jamais qu'un joueur a été transféré, échangé ou qu'il
+appartient à une autre équipe si cette information n'est pas
+explicitement présente dans le contexte fourni.
+
+8. N'utilise aucune connaissance extérieure pour expliquer une
+incohérence entre les documents et les données SQL.
+
+9. Si les documents mentionnent un joueur mais que les résultats SQL
+concernant l'équipe interrogée ne contiennent pas ce joueur, conserve
+strictement cette distinction.
+
+10. Avant de produire la réponse, vérifie pour chaque joueur cité :
+- si son nom apparaît dans les documents ;
+- si son nom apparaît dans les résultats SQL ;
+- si chaque statistique citée provient bien de sa propre ligne SQL.
+
+11. En cas de doute sur l'association entre un joueur et une
+statistique, n'attribue pas la statistique.
+
+12. Ne fusionne jamais deux joueurs différents même si leurs noms,
+leurs équipes, leurs rôles ou leur contexte documentaire semblent liés.
 
 ---
 
@@ -52,63 +127,6 @@ QUESTION DU FAN:
 {question}
 
 RÉPONSE DE L'ANALYSTE NBA:"""
-
-
-# ============================================================
-# Prompt de routage
-# ============================================================
-
-ROUTER_PROMPT = """Tu dois déterminer quelle source de données est nécessaire
-pour répondre à une question sur la NBA.
-
-Tu dois choisir exactement UNE valeur parmi :
-
-rag
-sql
-hybrid
-
-Définitions :
-
-rag :
-La question porte sur des commentaires, opinions, débats,
-analyses textuelles ou informations présentes dans les documents.
-
-sql :
-La question demande un calcul, un classement, une statistique,
-un pourcentage, un nombre de matchs ou une comparaison basée
-uniquement sur les statistiques des joueurs.
-
-hybrid :
-La question nécessite à la fois des commentaires ou analyses
-textuelles ET des statistiques chiffrées.
-
-Exemples :
-
-Question :
-Quelles équipes ont impressionné les commentateurs pendant les playoffs ?
-Réponse :
-rag
-
-Question :
-Quel joueur ayant disputé au moins 50 matchs possède le meilleur TS% ?
-Réponse :
-sql
-
-Question :
-Quels joueurs des Minnesota Timberwolves sont mis en avant par
-les commentateurs et que montrent leurs statistiques individuelles ?
-Réponse :
-hybrid
-
-Question :
-{question}
-
-Réponds uniquement par :
-rag
-sql
-ou
-hybrid
-"""
 
 
 # ============================================================
@@ -171,252 +189,252 @@ class RAGPipeline:
         """
 
         prompt = f"""
-    Tu es le routeur d'un système de question-réponse spécialisé
-    sur la NBA.
+Tu es le routeur d'un système de question-réponse spécialisé
+sur la NBA.
 
-    Tu dois classer la question de l'utilisateur dans UNE SEULE
-    des quatre catégories suivantes :
+Tu dois classer la question de l'utilisateur dans UNE SEULE
+des quatre catégories suivantes :
 
-    RAG
-    SQL
-    HYBRID
-    OUT_OF_SCOPE
+RAG
+SQL
+HYBRID
+OUT_OF_SCOPE
 
 
-    ============================================================
-    1. RAG
-    ============================================================
+============================================================
+1. RAG
+============================================================
 
-    Choisis RAG lorsque la réponse doit être recherchée dans les
-    documents textuels du corpus.
+Choisis RAG lorsque la réponse doit être recherchée dans les
+documents textuels du corpus.
 
-    Cela concerne notamment :
+Cela concerne notamment :
 
-    - commentaires de fans ;
-    - opinions ;
-    - débats ;
-    - réactions ;
-    - explications présentes dans les documents ;
-    - discussions sur les playoffs ;
-    - faits ou événements NBA décrits dans les documents ;
-    - questions historiques NBA lorsque les statistiques de la
-    base structurée actuelle ne permettent pas d'y répondre.
+- commentaires de fans ;
+- opinions ;
+- débats ;
+- réactions ;
+- explications présentes dans les documents ;
+- discussions sur les playoffs ;
+- faits ou événements NBA décrits dans les documents ;
+- questions historiques NBA lorsque les statistiques de la
+base structurée actuelle ne permettent pas d'y répondre.
 
-    IMPORTANT :
+IMPORTANT :
 
-    La simple présence du nom d'un joueur ou d'une équipe ne
-    justifie PAS l'utilisation de SQL.
+La simple présence du nom d'un joueur ou d'une équipe ne
+justifie PAS l'utilisation de SQL.
 
-    Exemples :
+Exemples :
 
-    Question :
-    Quelles équipes ont impressionné les commentateurs pendant
-    les playoffs ?
+Question :
+Quelles équipes ont impressionné les commentateurs pendant
+les playoffs ?
 
-    Route :
-    RAG
+Route :
+RAG
 
 
-    Question :
-    Pourquoi certains fans pensent-ils qu'une finale entre les
-    Pacers et le Thunder pourrait être moins suivie ?
+Question :
+Pourquoi certains fans pensent-ils qu'une finale entre les
+Pacers et le Thunder pourrait être moins suivie ?
 
-    Route :
-    RAG
+Route :
+RAG
 
 
-    Question :
-    Pourquoi Reggie Miller est-il présenté comme une première
-    option particulièrement efficace en playoffs ?
+Question :
+Pourquoi Reggie Miller est-il présenté comme une première
+option particulièrement efficace en playoffs ?
 
-    Route :
-    RAG
+Route :
+RAG
 
 
-    Question :
-    Une équipe NBA a-t-elle déjà joué les trois premiers tours
-    sans avantage du terrain avant de l'obtenir en Finales ?
+Question :
+Une équipe NBA a-t-elle déjà joué les trois premiers tours
+sans avantage du terrain avant de l'obtenir en Finales ?
 
-    Route :
-    RAG
+Route :
+RAG
 
 
-    Question :
-    Pourquoi les Wolves ont-ils impressionné pendant les
-    playoffs ?
+Question :
+Pourquoi les Wolves ont-ils impressionné pendant les
+playoffs ?
 
-    Route :
-    RAG
+Route :
+RAG
 
 
-    ============================================================
-    2. SQL
-    ============================================================
+============================================================
+2. SQL
+============================================================
 
-    Choisis SQL UNIQUEMENT lorsque la question peut être résolue
-    à partir des statistiques individuelles de la saison NBA
-    présentes dans la base structurée.
+Choisis SQL UNIQUEMENT lorsque la question peut être résolue
+à partir des statistiques individuelles de la saison NBA
+présentes dans la base structurée.
 
-    La base contient notamment :
+La base contient notamment :
 
-    - joueur ;
-    - équipe ;
-    - matchs joués ;
-    - points ;
-    - rebonds ;
-    - passes ;
-    - tentatives à trois points ;
-    - pourcentage à trois points ;
-    - True Shooting Percentage ;
-    - NETRTG.
+- joueur ;
+- équipe ;
+- matchs joués ;
+- points ;
+- rebonds ;
+- passes ;
+- tentatives à trois points ;
+- pourcentage à trois points ;
+- True Shooting Percentage ;
+- NETRTG.
 
-    SQL est particulièrement adapté aux :
+SQL est particulièrement adapté aux :
 
-    - classements ;
-    - maximums ou minimums ;
-    - top N ;
-    - filtres numériques ;
-    - seuils ;
-    - comparaisons statistiques ;
-    - recherche d'une valeur statistique.
+- classements ;
+- maximums ou minimums ;
+- top N ;
+- filtres numériques ;
+- seuils ;
+- comparaisons statistiques ;
+- recherche d'une valeur statistique.
 
-    Exemples :
+Exemples :
 
-    Question :
-    Quel joueur ayant tenté au moins 100 tirs à 3 points possède
-    le meilleur pourcentage de réussite à 3 points ?
+Question :
+Quel joueur ayant tenté au moins 100 tirs à 3 points possède
+le meilleur pourcentage de réussite à 3 points ?
 
-    Route :
-    SQL
+Route :
+SQL
 
 
-    Question :
-    Quel joueur ayant disputé au moins 50 matchs possède le
-    meilleur True Shooting Percentage ?
+Question :
+Quel joueur ayant disputé au moins 50 matchs possède le
+meilleur True Shooting Percentage ?
 
-    Route :
-    SQL
+Route :
+SQL
 
 
-    Question :
-    Quels sont les cinq joueurs ayant tenté au moins 100 tirs à
-    3 points avec le meilleur pourcentage de réussite ?
+Question :
+Quels sont les cinq joueurs ayant tenté au moins 100 tirs à
+3 points avec le meilleur pourcentage de réussite ?
 
-    Route :
-    SQL
+Route :
+SQL
 
 
-    Question :
-    Parmi les joueurs ayant disputé au moins 50 matchs, quels
-    sont les cinq joueurs ayant le meilleur NETRTG ?
+Question :
+Parmi les joueurs ayant disputé au moins 50 matchs, quels
+sont les cinq joueurs ayant le meilleur NETRTG ?
 
-    Route :
-    SQL
+Route :
+SQL
 
 
-    ============================================================
-    3. HYBRID
-    ============================================================
+============================================================
+3. HYBRID
+============================================================
 
-    Choisis HYBRID uniquement si répondre correctement nécessite
-    À LA FOIS :
+Choisis HYBRID uniquement si répondre correctement nécessite
+À LA FOIS :
 
-    1. des informations provenant des documents textuels ;
-    ET
-    2. des statistiques provenant de la base SQL.
+1. des informations provenant des documents textuels ;
+ET
+2. des statistiques provenant de la base SQL.
 
-    Les deux sources doivent réellement être nécessaires.
+Les deux sources doivent réellement être nécessaires.
 
-    Ne choisis PAS HYBRID simplement parce qu'un joueur ou une
-    équipe possède des statistiques dans la base.
+Ne choisis PAS HYBRID simplement parce qu'un joueur ou une
+équipe possède des statistiques dans la base.
 
-    Exemples :
+Exemples :
 
-    Question :
-    Quels joueurs des Minnesota Timberwolves sont mis en avant
-    par les commentateurs et que montrent leurs statistiques
-    individuelles disponibles ?
+Question :
+Quels joueurs des Minnesota Timberwolves sont mis en avant
+par les commentateurs et que montrent leurs statistiques
+individuelles disponibles ?
 
-    Route :
-    HYBRID
+Route :
+HYBRID
 
 
-    Question :
-    Quels joueurs du Orlando Magic sont mis en avant par les
-    commentateurs et que montrent leurs statistiques
-    individuelles disponibles ?
+Question :
+Quels joueurs du Orlando Magic sont mis en avant par les
+commentateurs et que montrent leurs statistiques
+individuelles disponibles ?
 
-    Route :
-    HYBRID
+Route :
+HYBRID
 
 
-    ============================================================
-    4. OUT_OF_SCOPE
-    ============================================================
+============================================================
+4. OUT_OF_SCOPE
+============================================================
 
-    Choisis OUT_OF_SCOPE lorsque la question n'appartient pas au
-    périmètre NBA du système.
+Choisis OUT_OF_SCOPE lorsque la question n'appartient pas au
+périmètre NBA du système.
 
-    Cela inclut notamment :
+Cela inclut notamment :
 
-    - football ;
-    - tennis ;
-    - politique ;
-    - cinéma ;
-    - météo ;
-    - sujets sans rapport avec la NBA.
+- football ;
+- tennis ;
+- politique ;
+- cinéma ;
+- météo ;
+- sujets sans rapport avec la NBA.
 
-    Exemple :
+Exemple :
 
-    Question :
-    Quel joueur a remporté le Ballon d'Or de football en 2024 ?
+Question :
+Quel joueur a remporté le Ballon d'Or de football en 2024 ?
 
-    Route :
-    OUT_OF_SCOPE
+Route :
+OUT_OF_SCOPE
 
 
-    ============================================================
-    RÈGLES IMPORTANTES
-    ============================================================
+============================================================
+RÈGLES IMPORTANTES
+============================================================
 
-    Règle 1 :
-    Une question sur une opinion, un commentaire ou un débat
-    doit être RAG, sauf si elle demande explicitement aussi des
-    statistiques.
+Règle 1 :
+Une question sur une opinion, un commentaire ou un débat
+doit être RAG, sauf si elle demande explicitement aussi des
+statistiques.
 
-    Règle 2 :
-    Une question statistique calculable à partir de la base doit
-    être SQL.
+Règle 2 :
+Une question statistique calculable à partir de la base doit
+être SQL.
 
-    Règle 3 :
-    HYBRID nécessite explicitement les deux types d'information.
+Règle 3 :
+HYBRID nécessite explicitement les deux types d'information.
 
-    Règle 4 :
-    Une question NBA historique n'est pas automatiquement SQL.
-    La base SQL contient des statistiques de joueurs de la
-    saison actuelle et ne constitue pas une base historique
-    générale.
+Règle 4 :
+Une question NBA historique n'est pas automatiquement SQL.
+La base SQL contient des statistiques de joueurs de la
+saison actuelle et ne constitue pas une base historique
+générale.
 
-    Règle 5 :
-    Une question extérieure à la NBA est OUT_OF_SCOPE.
+Règle 5 :
+Une question extérieure à la NBA est OUT_OF_SCOPE.
 
-    Règle 6 :
-    Ne déduis pas qu'une question nécessite SQL uniquement parce
-    qu'elle contient le nom d'un joueur ou d'une équipe.
+Règle 6 :
+Ne déduis pas qu'une question nécessite SQL uniquement parce
+qu'elle contient le nom d'un joueur ou d'une équipe.
 
-    Réponds UNIQUEMENT avec l'une des quatre valeurs suivantes :
+Réponds UNIQUEMENT avec l'une des quatre valeurs suivantes :
 
-    rag
-    sql
-    hybrid
-    out_of_scope
+rag
+sql
+hybrid
+out_of_scope
 
 
-    QUESTION :
-    {question}
+QUESTION :
+{question}
 
-    ROUTE :
-    """
+ROUTE :
+"""
 
         messages = [
             ChatMessage(
@@ -673,24 +691,23 @@ class RAGPipeline:
 
                 context_parts.append(
                     "=== CONTEXTE STATISTIQUE SQL ===\n"
-                    "Le SQL Tool n'a pas pu produire de résultat."
+                    "Le SQLTool n'a pas pu fournir de résultat."
                 )
 
         # ----------------------------------------------------
         # 4. Construction du contexte final
         # ----------------------------------------------------
 
-        if context_parts:
+        if not context_parts:
 
-            context_str = "\n\n".join(
-                context_parts
+            context_str = (
+                "Aucun contexte exploitable n'a été trouvé."
             )
 
         else:
 
-            context_str = (
-                "Aucun contexte disponible pour répondre "
-                "à cette question."
+            context_str = "\n\n".join(
+                context_parts
             )
 
         # ----------------------------------------------------
@@ -699,53 +716,66 @@ class RAGPipeline:
 
         answer = self.generate(
             question=question,
-            context_str=context_str
+            context_str=context_str,
         )
 
         # ----------------------------------------------------
-        # 6. Résultat structuré
+        # 6. Métadonnées documentaires
+        # ----------------------------------------------------
+
+        contexts = [
+            result["text"]
+            for result in search_results
+        ]
+
+        sources = [
+            result["metadata"].get(
+                "source",
+                "Inconnue"
+            )
+            for result in search_results
+        ]
+
+        scores = [
+            result["score"]
+            for result in search_results
+        ]
+
+        # ----------------------------------------------------
+        # 7. Métadonnées SQL
+        # ----------------------------------------------------
+
+        sql_query = None
+        sql_results = []
+        sql_error = None
+
+        if sql_result:
+
+            sql_query = sql_result.get(
+                "sql"
+            )
+
+            sql_results = sql_result.get(
+                "results",
+                []
+            )
+
+            sql_error = sql_result.get(
+                "error"
+            )
+
+        # ----------------------------------------------------
+        # 8. Résultat final
         # ----------------------------------------------------
 
         return {
             "question": question,
             "route": route,
             "answer": answer,
-
-            # Données documentaires
-            "contexts": [
-                result["text"]
-                for result in search_results
-            ],
-
-            "sources": [
-                result["metadata"].get(
-                    "source",
-                    "Inconnue"
-                )
-                for result in search_results
-            ],
-
-            "scores": [
-                result["score"]
-                for result in search_results
-            ],
-
-            # Données SQL
-            "sql": (
-                sql_result.get("sql")
-                if sql_result
-                else None
-            ),
-
-            "sql_results": (
-                sql_result.get("results", [])
-                if sql_result
-                else []
-            ),
-
-            "sql_error": (
-                sql_result.get("error")
-                if sql_result
-                else None
-            ),
+            "contexts": contexts,
+            "sources": sources,
+            "scores": scores,
+            "sql": sql_query,
+            "sql_results": sql_results,
+            "sql_error": sql_error,
         }
