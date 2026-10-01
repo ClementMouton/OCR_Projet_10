@@ -1,0 +1,187 @@
+{
+  "correct": 4,
+  "total": 4,
+  "accuracy": 1.0,
+  "results": [
+    {
+      "id": "Q07",
+      "success": true,
+      "expected": [
+        {
+          "player": "Seth Curry",
+          "team": "CHA",
+          "three_pa": 184.0,
+          "three_p_pct": 45.6
+        }
+      ],
+      "actual": [
+        {
+          "player": "Seth Curry",
+          "team": "CHA",
+          "three_pa": 184.0,
+          "three_p_pct": 45.6
+        }
+      ],
+      "sql": "SELECT player, team, three_pa, three_p_pct\nFROM player_stats\nWHERE three_pa >= 100\nORDER BY three_p_pct DESC\nLIMIT 1;"
+    },
+    {
+      "id": "Q08",
+      "success": true,
+      "expected": [
+        {
+          "player": "Jarrett Allen",
+          "team": "CLE",
+          "gp": 82,
+          "ts_pct": 72.4
+        }
+      ],
+      "actual": [
+        {
+          "player": "Jarrett Allen",
+          "team": "CLE",
+          "gp": 82,
+          "ts_pct": 72.4
+        }
+      ],
+      "sql": "SELECT player, team, gp, ts_pct FROM player_stats WHERE gp >= 50 ORDER BY ts_pct DESC LIMIT 1"
+    },
+    {
+      "id": "Q09",
+      "success": true,
+      "expected": [
+        {
+          "player": "Seth Curry",
+          "team": "CHA",
+          "three_pa": 184.0,
+          "three_p_pct": 45.6
+        },
+        {
+          "player": "Zach LaVine",
+          "team": "SAC",
+          "three_pa": 533.0,
+          "three_p_pct": 44.6
+        },
+        {
+          "player": "Ty Jerome",
+          "team": "CLE",
+          "three_pa": 252.0,
+          "three_p_pct": 43.9
+        },
+        {
+          "player": "Taurean Prince",
+          "team": "MIL",
+          "three_pa": 336.0,
+          "three_p_pct": 43.9
+        },
+        {
+          "player": "Vít Krejčí",
+          "team": "ATL",
+          "three_pa": 205.0,
+          "three_p_pct": 43.7
+        }
+      ],
+      "actual": [
+        {
+          "player": "Seth Curry",
+          "team": "CHA",
+          "three_pa": 184.0,
+          "three_p_pct": 45.6
+        },
+        {
+          "player": "Zach LaVine",
+          "team": "SAC",
+          "three_pa": 533.0,
+          "three_p_pct": 44.6
+        },
+        {
+          "player": "Ty Jerome",
+          "team": "CLE",
+          "three_pa": 252.0,
+          "three_p_pct": 43.9
+        },
+        {
+          "player": "Taurean Prince",
+          "team": "MIL",
+          "three_pa": 336.0,
+          "three_p_pct": 43.9
+        },
+        {
+          "player": "Vít Krejčí",
+          "team": "ATL",
+          "three_pa": 205.0,
+          "three_p_pct": 43.7
+        }
+      ],
+      "sql": "SELECT player, team, three_pa, three_p_pct\nFROM player_stats\nWHERE three_pa >= 100\nORDER BY three_p_pct DESC\nLIMIT 5;"
+    },
+    {
+      "id": "Q10",
+      "success": true,
+      "expected": [
+        {
+          "player": "Shai Gilgeous-Alexander",
+          "team": "OKC",
+          "gp": 76,
+          "net_rtg": 16.7
+        },
+        {
+          "player": "Isaiah Joe",
+          "team": "OKC",
+          "gp": 74,
+          "net_rtg": 15.8
+        },
+        {
+          "player": "Alex Caruso",
+          "team": "OKC",
+          "gp": 54,
+          "net_rtg": 15.0
+        },
+        {
+          "player": "Luke Kornet",
+          "team": "BOS",
+          "gp": 73,
+          "net_rtg": 14.9
+        },
+        {
+          "player": "Kenrich Williams",
+          "team": "OKC",
+          "gp": 69,
+          "net_rtg": 14.5
+        }
+      ],
+      "actual": [
+        {
+          "player": "Shai Gilgeous-Alexander",
+          "team": "OKC",
+          "gp": 76,
+          "net_rtg": 16.7
+        },
+        {
+          "player": "Isaiah Joe",
+          "team": "OKC",
+          "gp": 74,
+          "net_rtg": 15.8
+        },
+        {
+          "player": "Alex Caruso",
+          "team": "OKC",
+          "gp": 54,
+          "net_rtg": 15.0
+        },
+        {
+          "player": "Luke Kornet",
+          "team": "BOS",
+          "gp": 73,
+          "net_rtg": 14.9
+        },
+        {
+          "player": "Kenrich Williams",
+          "team": "OKC",
+          "gp": 69,
+          "net_rtg": 14.5
+        }
+      ],
+      "sql": "SELECT player, team, gp, net_rtg\nFROM player_stats\nWHERE gp >= 50\nORDER BY net_rtg DESC\nLIMIT 5;"
+    }
+  ]
+}

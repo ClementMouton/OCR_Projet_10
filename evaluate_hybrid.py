@@ -186,6 +186,7 @@ def main():
         "rag": 0,
         "sql": 0,
         "hybrid": 0,
+        "out_of_scope": 0,
         "error": 0,
     }
 
@@ -217,6 +218,10 @@ def main():
 
     print(
         f"HYBRID  : {route_counts['hybrid']}"
+    )
+
+    print(
+        f"OUT     : {route_counts['out_of_scope']}"
     )
 
     print(

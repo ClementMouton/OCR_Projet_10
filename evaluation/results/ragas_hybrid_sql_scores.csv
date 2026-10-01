@@ -1,0 +1,19 @@
+﻿user_input,response,reference,answer_relevancy
+Quel joueur ayant tenté au moins 100 tirs à 3 points possède le meilleur pourcentage de réussite à 3 points ?,"D'après les données statistiques fournies, le joueur ayant tenté au moins 100 tirs à 3 points avec le meilleur pourcentage de réussite est **Seth Curry** (CHA) avec un pourcentage de **45,6%** (184 tirs à 3 points tentés).","Seth Curry possède le meilleur pourcentage de réussite à 3 points parmi les joueurs ayant tenté au moins 100 tirs à 3 points, avec 45,6 % sur 184 tentatives.",
+Quel joueur ayant disputé au moins 50 matchs possède le meilleur True Shooting Percentage ?,"D'après les données statistiques fournies, **Jarrett Allen** (CLE) possède le meilleur **True Shooting Percentage (TS%)** parmi les joueurs ayant disputé au moins 50 matchs, avec un pourcentage de **72,4 %**.
+
+*(Source : Requête SQL exécutée sur la base de données des statistiques NBA, filtrant les joueurs avec au moins 50 matchs joués et classés par TS% décroissant.)*","Jarrett Allen possède le meilleur True Shooting Percentage parmi les joueurs ayant disputé au moins 50 matchs, avec 72,4 % en 82 matchs.",
+Quels sont les cinq joueurs ayant tenté au moins 100 tirs à 3 points avec le meilleur pourcentage de réussite à 3 points ?,"D'après les données statistiques fournies, voici les cinq joueurs ayant tenté au moins 100 tirs à 3 points avec le meilleur pourcentage de réussite à 3 points :
+
+1. **Seth Curry** (CHA) – 45,6 % (184 tirs tentés)
+2. **Zach LaVine** (SAC) – 44,6 % (533 tirs tentés)
+3. **Ty Jerome** (CLE) – 43,9 % (252 tirs tentés)
+4. **Taurean Prince** (MIL) – 43,9 % (336 tirs tentés)
+5. **Vít Krejčí** (ATL) – 43,7 % (205 tirs tentés)","Les cinq meilleurs sont Seth Curry avec 45,6 %, Zach LaVine avec 44,6 %, Taurean Prince avec 43,9 %, Ty Jerome avec 43,9 % et Vít Krejčí avec 43,7 %.",
+"Parmi les joueurs ayant disputé au moins 50 matchs, quels sont les cinq joueurs ayant le meilleur NETRTG ?","D'après les données statistiques fournies, voici les **cinq joueurs ayant disputé au moins 50 matchs** avec le **meilleur NETRTG** (Net Rating) :
+
+1. **Shai Gilgeous-Alexander** (OKC) – **16.7**
+2. **Isaiah Joe** (OKC) – **15.8**
+3. **Alex Caruso** (OKC) – **15.0**
+4. **Luke Kornet** (BOS) – **14.9**
+5. **Kenrich Williams** (OKC) – **14.5**","Les cinq joueurs ayant le meilleur NETRTG sont Shai Gilgeous-Alexander avec 16,7, Isaiah Joe avec 15,8, Alex Caruso avec 15,0, Luke Kornet avec 14,9 et Kenrich Williams avec 14,5.",

@@ -585,6 +585,28 @@ class RAGPipeline:
             question
         )
 
+        if route == "out_of_scope":
+
+            logging.info(
+                "Question hors périmètre NBA détectée."
+            )
+
+            return {
+                "question": question,
+                "route": route,
+                "answer": (
+                    "Cette question est hors du périmètre de ce système, "
+                    "qui est spécialisé dans l'analyse des données et "
+                    "discussions NBA disponibles dans son corpus."
+                ),
+                "contexts": [],
+                "sources": [],
+                "scores": [],
+                "sql": None,
+                "sql_results": [],
+                "sql_error": None,
+            }
+
         search_results = []
         sql_result = None
 
