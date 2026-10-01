@@ -1,135 +1,456 @@
-# Assistant RAG avec Mistral
+# NBA Analyst AI — Assistant RAG hybride avec Mistral
 
-Ce projet implémente un assistant virtuel basé sur le modèle Mistral, utilisant la technique de Retrieval-Augmented Generation (RAG) pour fournir des réponses précises et contextuelles à partir d'une base de connaissances personnalisée.
+Projet réalisé dans le cadre du parcours **Data Scientist / Machine Learning d'OpenClassrooms**.
 
-## Fonctionnalités
+L'objectif est de construire un assistant conversationnel capable d'exploiter plusieurs types de données NBA :
 
-- 🔍 **Recherche sémantique** avec FAISS pour trouver les documents pertinents
-- 🤖 **Génération de réponses** avec les modèles Mistral (Small ou Large)
-- ⚙️ **Paramètres personnalisables** (modèle, nombre de documents, score minimum)
+- des contenus documentaires non structurés, notamment des discussions Reddit ;
+- des statistiques individuelles de joueurs sous forme tabulaire ;
+- des questions nécessitant de combiner informations documentaires et statistiques.
 
-## Prérequis
+Le système repose sur une architecture hybride associant **RAG, génération SQL et routage automatique des questions**.
 
-- Python 3.9+ 
-- Clé API Mistral (obtenue sur [console.mistral.ai](https://console.mistral.ai/))
+---
 
-## Installation
+## 1. Objectif du projet
 
-1. **Cloner le dépôt**
+Un RAG classique est adapté aux questions portant sur du contenu textuel, mais moins pertinent lorsqu'une réponse nécessite un calcul ou un filtrage précis sur des données structurées.
 
-```bash
-git clone <url-du-repo>
-cd <nom-du-repo>
+Le projet sépare donc deux sources d'information :
+
+- **Données non structurées** : extraction/OCR, chunking, embeddings Mistral, indexation FAISS et recherche sémantique.
+- **Données structurées** : statistiques NBA intégrées dans SQLite et interrogées via un SQL Tool.
+
+Un routeur choisit automatiquement le pipeline adapté à chaque question.
+
+---
+
+## 2. Architecture générale
+
+```text
+                         Question utilisateur
+                                  |
+                                  v
+                         +------------------+
+                         | Routeur Mistral  |
+                         +------------------+
+                                  |
+             +--------------------+--------------------+
+             |                    |                    |
+             v                    v                    v
+            RAG                  SQL                HYBRID
+             |                    |                    |
+             v                    v             +------+------+
+      Recherche FAISS       SQL Tool            |             |
+             |                    |             v             v
+             v                    v           FAISS         SQLite
+     Chunks documentaires     SQLite             |             |
+             |                    |             +------+------+
+             +--------------------+--------------------+
+                                  |
+                                  v
+                              Mistral
+                                  |
+                                  v
+                         Réponse utilisateur
 ```
 
-2. **Créer un environnement virtuel**
+Une quatrième route, `OUT_OF_SCOPE`, identifie les questions ne relevant pas du périmètre NBA couvert.
 
-```bash
-# Création de l'environnement virtuel
-python -m venv venv
+---
 
-# Activation de l'environnement virtuel
-# Sur Windows
-venv\Scripts\activate
-# Sur macOS/Linux
-source venv/bin/activate
+## 3. Routes disponibles
+
+### `rag`
+
+Questions dont la réponse doit être recherchée dans les documents textuels.
+
+> Quelles équipes ont impressionné les commentateurs pendant les playoffs ?
+
+### `sql`
+
+Questions nécessitant une interrogation précise des statistiques NBA.
+
+> Qui est le joueur le plus précis à trois points parmi ceux qui en ont tenté au moins 100 ?
+
+### `hybrid`
+
+Questions nécessitant simultanément des informations documentaires et des statistiques structurées.
+
+> Quels joueurs des Minnesota Timberwolves sont mis en avant par les commentateurs et que montrent leurs statistiques individuelles disponibles ?
+
+### `out_of_scope`
+
+Questions ne correspondant pas au périmètre couvert par le système.
+
+---
+
+## 4. Sources de données
+
+### Documents Reddit
+
+Les discussions Reddit constituent la principale source documentaire du RAG.
+
+Lorsque le texte d'un PDF n'est pas suffisamment exploitable directement, le pipeline utilise **EasyOCR**. Le texte obtenu est ensuite nettoyé, découpé et indexé.
+
+### Statistiques NBA
+
+Les statistiques individuelles sont fournies dans :
+
+```text
+inputs/regular NBA.xlsx
 ```
 
-3. **Installer les dépendances**
+Le script `load_excel_to_db.py` valide les données puis les insère dans :
 
-```bash
-pip install -r requirements.txt
+```text
+database/nba.db
 ```
 
-4. **Configurer la clé API**
+La table principale est `player_stats`.
 
-Créez un fichier `.env` à la racine du projet avec le contenu suivant :
+---
 
-```
-MISTRAL_API_KEY=votre_clé_api_mistral
-```
-
-## Structure du projet
-
-```
-.
-├── MistralChat.py          # Application Streamlit principale
-├── indexer.py              # Script pour indexer les documents
-├── inputs/                 # Dossier pour les documents sources
-├── vector_db/              # Dossier pour l'index FAISS et les chunks
-├── database/               # Base de données SQLite pour les interactions
-└── utils/                  # Modules utilitaires
-    ├── config.py           # Configuration de l'application
-    ├── database.py         # Gestion de la base de données
-    └── vector_store.py     # Gestion de l'index vectoriel
-
-```
-
-## Utilisation
-
-### 1. Ajouter des documents
-
-Placez vos documents dans le dossier `inputs/`. Les formats supportés sont :
-- PDF
-- TXT
-- DOCX
-- CSV
-- JSON
-
-Vous pouvez organiser vos documents dans des sous-dossiers pour une meilleure organisation.
-
-### 2. Indexer les documents
-
-Exécutez le script d'indexation pour traiter les documents et créer l'index FAISS :
+## 5. Pipeline d'indexation documentaire
 
 ```bash
 python indexer.py
 ```
 
-Ce script va :
-1. Charger les documents depuis le dossier `inputs/`
-2. Découper les documents en chunks
-3. Générer des embeddings avec Mistral
-4. Créer un index FAISS pour la recherche sémantique
-5. Sauvegarder l'index et les chunks dans le dossier `vector_db/`
+```text
+PDF
+ |
+ v
+Extraction texte
+ |
+ +---- texte insuffisant ----> OCR EasyOCR
+ |
+ v
+Nettoyage
+ |
+ v
+Chunking
+ |
+ v
+Embeddings Mistral
+ |
+ v
+Index FAISS
+```
 
-### 3. Lancer l'application
+Configuration actuelle :
+
+```text
+CHUNK_SIZE = 1500
+CHUNK_OVERLAP = 150
+SEARCH_K = 5
+```
+
+Artefacts :
+
+```text
+vector_db/
+├── faiss_index.idx
+└── document_chunks.pkl
+```
+
+L'index actuellement utilisé contient **100 vecteurs pour 100 chunks documentaires**.
+
+---
+
+## 6. Base SQLite et SQL Tool
+
+```bash
+python load_excel_to_db.py
+```
+
+Le script lit le fichier Excel, sélectionne les colonnes utiles, valide les données, crée SQLite et alimente `player_stats`.
+
+Exemple de requête générée :
+
+```sql
+SELECT
+    player,
+    team,
+    three_pa,
+    three_p_pct
+FROM player_stats
+WHERE three_pa >= 100
+ORDER BY three_p_pct DESC
+LIMIT 1;
+```
+
+---
+
+## 7. Sécurisation des requêtes SQL
+
+Une requête générée par le LLM n'est pas exécutée directement.
+
+La validation contrôle notamment :
+
+- le caractère autorisé de la lecture ;
+- l'absence de modification des données ;
+- la présence d'une seule instruction ;
+- l'utilisation exclusive des tables autorisées.
+
+Les opérations `INSERT`, `UPDATE`, `DELETE`, `DROP` ou `PRAGMA` sont notamment rejetées.
+
+---
+
+## 8. Modèles utilisés
+
+### Génération
+
+```text
+mistral-small-latest
+```
+
+Utilisé pour le routage, la génération SQL et la génération des réponses.
+
+### Embeddings
+
+```text
+mistral-embed
+```
+
+Utilisé pour la représentation vectorielle des chunks et des questions.
+
+---
+
+## 9. Installation
+
+```bash
+git clone https://github.com/ClementMouton/OCR_Projet_10.git
+cd OCR_Projet_10
+python -m venv .venv
+```
+
+Sous Windows :
+
+```bash
+.venv\Scripts\activate
+```
+
+Puis :
+
+```bash
+pip install -r requirements.txt
+```
+
+Créer un `.env` à partir de `.env.example` et renseigner au minimum :
+
+```text
+MISTRAL_API_KEY=VOTRE_CLE_API
+```
+
+---
+
+## 10. Préparation des données
+
+Créer la base SQLite :
+
+```bash
+python load_excel_to_db.py
+```
+
+Construire l'index documentaire :
+
+```bash
+python indexer.py
+```
+
+L'OCR peut prendre plusieurs minutes sur CPU.
+
+---
+
+## 11. Lancer l'application
 
 ```bash
 streamlit run MistralChat.py
 ```
 
-L'application sera accessible à l'adresse http://localhost:8501 dans votre navigateur.
+Le pipeline sélectionne automatiquement la route adaptée à la question.
 
+---
 
-## Modules principaux
+## 12. Évaluation
 
-### `utils/vector_store.py`
+### Tests unitaires
 
-Gère l'index vectoriel FAISS et la recherche sémantique :
-- Chargement et découpage des documents
-- Génération des embeddings avec Mistral
-- Création et interrogation de l'index FAISS
+```bash
+python -m pytest -v
+```
 
-### `utils/query_classifier.py`
+Résultat actuel :
 
-Détermine si une requête nécessite une recherche RAG :
-- Analyse des mots-clés
-- Classification avec le modèle Mistral
-- Détection des questions spécifiques vs générales
+```text
+21 passed
+```
 
-### `utils/database.py`
+Les tests couvrent :
 
-Gère la base de données SQLite pour les interactions :
-- Enregistrement des questions et réponses
-- Stockage des feedbacks utilisateurs
-- Récupération des statistiques
+- l'intégrité SQLite ;
+- les résultats statistiques de référence ;
+- la sécurité du SQL Tool ;
+- l'intégrité FAISS ;
+- la cohérence vecteurs/chunks.
 
-## Personnalisation
+### Routeur
 
-Vous pouvez personnaliser l'application en modifiant les paramètres dans `utils/config.py` :
-- Modèles Mistral utilisés
-- Taille des chunks et chevauchement
-- Nombre de documents par défaut
-- Nom de la commune ou organisation
+Le benchmark couvre les quatre routes.
 
+```text
+12 / 12 routes correctement identifiées
+Accuracy : 100 %
+```
+
+Répartition :
+
+```text
+RAG          : Q01 à Q05
+OUT_OF_SCOPE : Q06
+SQL          : Q07 à Q10
+HYBRID       : Q11 à Q12
+```
+
+### SQL
+
+```text
+4 / 4 requêtes correctes
+Exactitude SQL : 100 %
+```
+
+---
+
+## 13. Évaluation RAGAS
+
+RAGAS évalue les routes `rag` et `hybrid`. Les routes `sql` sont évaluées séparément et `out_of_scope` est exclue.
+
+| Métrique | Score |
+|---|---:|
+| Faithfulness | 0,7000 |
+| Context Precision | 0,6127 |
+| Context Recall | 0,5476 |
+
+### Interprétation
+
+**Faithfulness — 0,7000** : les réponses restent globalement fondées sur le contexte fourni.
+
+**Context Precision — 0,6127** : une majorité des éléments remontés sont utiles, mais certains chunks restent peu pertinents.
+
+**Context Recall — 0,5476** : une partie significative des informations nécessaires est retrouvée, mais le retrieval peut encore être amélioré.
+
+### Response Relevancy
+
+`ResponseRelevancy` a été testée mais retournait des valeurs `NaN` avec l'intégration Mistral/RAGAS utilisée dans l'environnement du projet. Elle a donc été retirée de l'évaluation finale.
+
+---
+
+## 14. Stratégie de validation
+
+```text
+Tests pytest
+    |
+    +--> intégrité SQLite
+    +--> sécurité SQL
+    +--> intégrité FAISS
+
+Benchmark routeur
+    |
+    +--> RAG / SQL / HYBRID / OUT_OF_SCOPE
+
+Évaluation SQL
+    |
+    +--> exactitude déterministe
+
+RAGAS
+    |
+    +--> qualité du retrieval
+    +--> fidélité au contexte
+```
+
+---
+
+## 15. Structure du projet
+
+```text
+OCR_Projet_10/
+│
+├── MistralChat.py
+├── indexer.py
+├── load_excel_to_db.py
+├── evaluate_hybrid.py
+├── evaluate_ragas.py
+├── test_router.py
+├── test_sql_tool.py
+│
+├── inputs/
+├── database/
+│   └── nba.db
+├── vector_db/
+│   ├── faiss_index.idx
+│   └── document_chunks.pkl
+├── evaluation/
+│   ├── run_ragas_hybrid.py
+│   ├── evaluate_sql.py
+│   └── results/
+├── tests/
+│   ├── test_sql_database.py
+│   ├── test_sql_security.py
+│   └── test_vector_store.py
+├── utils/
+│   ├── config.py
+│   ├── rag_pipeline.py
+│   ├── sql_tool.py
+│   └── vector_store.py
+├── .env.example
+├── requirements.txt
+└── README.md
+```
+
+---
+
+## 16. Limites actuelles
+
+- Le retrieval documentaire peut encore être amélioré, notamment au regard du Context Recall.
+- EasyOCR est relativement lent sur CPU.
+- Le système dépend de la disponibilité, de la latence et des quotas de l'API Mistral.
+- La génération SQL reste dépendante de l'interprétation de la question par le LLM, malgré la validation de sécurité.
+- Le benchmark d'évaluation reste limité à un nombre restreint de questions.
+
+---
+
+## 17. Améliorations possibles
+
+- enrichir le jeu d'évaluation ;
+- optimiser le chunking et le retrieval ;
+- ajouter un reranker ;
+- adapter dynamiquement `SEARCH_K` ;
+- mesurer la latence par route ;
+- suivre les coûts API ;
+- ajouter du monitoring ;
+- mettre en cache certaines requêtes ;
+- renforcer la gestion des indisponibilités API.
+
+---
+
+## 18. Technologies utilisées
+
+- Python
+- Mistral AI
+- FAISS
+- SQLite
+- Streamlit
+- EasyOCR
+- PyMuPDF
+- pandas
+- Pydantic
+- RAGAS
+- pytest
+- LangChain / intégrations Mistral
+
+---
+
+## Auteur
+
+Projet réalisé par **Clément Mouton** dans le cadre du parcours OpenClassrooms Data Scientist / Machine Learning.
