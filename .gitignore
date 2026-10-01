@@ -46,3 +46,10 @@ data/
 
 # Jupyter Notebook
 .ipynb_checkpoints
+
+# Pytest
+.pytest_cache/
+
+# Coverage
+.coverage
+htmlcov/

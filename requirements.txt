@@ -1,15 +1,33 @@
+# Application
 streamlit==1.44.1
+python-dotenv==1.1.0
+
+# Mistral / LangChain
 mistralai==0.4.2
-langchain==0.3.23
+langchain==1.4.2
+langchain-mistralai==1.1.6
+
+# RAG / Vector store
 faiss-cpu==1.10.0
+
+# Documents / OCR
 PyPDF2==3.0.1
 python-docx==1.1.2
+pymupdf==1.28.2
+pillow>=9.0.0
+easyocr==1.7.2
+tqdm
+requests==2.32.3
+
+# Data
 pandas==2.2.3
 openpyxl==3.1.5
-python-dotenv==1.1.0
-requests==2.32.3
-streamlit-feedback==0.1.4
-pymupdf>=1.22.0
-pillow>=9.0.0
-easyocr
-tqdm
+
+# Validation
+pydantic==2.13.5
+
+# Evaluation
+ragas==0.4.3
+
+# Tests
+pytest==9.1.1
