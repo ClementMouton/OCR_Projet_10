@@ -293,7 +293,8 @@ Les tests couvrent :
 - les résultats statistiques de référence ;
 - la sécurité du SQL Tool ;
 - l'intégrité FAISS ;
-- la cohérence vecteurs/chunks.
+- la cohérence vecteurs/chunks ;
+- la cohérence des réponses hybrides RAG + SQL.
 
 ### Routeur
 
