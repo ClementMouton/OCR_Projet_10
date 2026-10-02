@@ -284,7 +284,7 @@ python -m pytest -v
 Résultat actuel :
 
 ```text
-21 passed
+25 passed
 ```
 
 Les tests couvrent :
@@ -379,8 +379,6 @@ OCR_Projet_10/
 ├── MistralChat.py
 ├── indexer.py
 ├── load_excel_to_db.py
-├── evaluate_hybrid.py
-├── evaluate_ragas.py
 ├── test_router.py
 ├── test_sql_tool.py
 │
@@ -397,9 +395,10 @@ OCR_Projet_10/
 │   ├── evaluate_sql.py
 │   └── results/
 ├── tests/
+│   ├── test_hybrid_consistency.py
 │   ├── test_sql_database.py
 │   ├── test_sql_security.py
-│   └── test_vector_store.py
+│   └── test_vector_store.py   
 ├── utils/
 │   ├── config.py
 │   ├── rag_pipeline.py
