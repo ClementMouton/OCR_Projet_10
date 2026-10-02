@@ -5,7 +5,7 @@
     "difficulty": "simple",
     "question": "Quelles équipes ont impressionné les commentateurs pendant les playoffs ?",
     "reference": "Les Minnesota Timberwolves sont régulièrement cités, notamment pour leur jeu collectif, leur défense et les performances d'Anthony Edwards et Julius Randle. Le Orlando Magic impressionne également certains commentateurs malgré ses difficultés offensives. Les Detroit Pistons et les Indiana Pacers sont aussi mentionnés positivement.",
-    "expected_source": "commentateurs_1.pdf"
+    "expected_source": "Reddit 1.pdf"
   },
   {
     "id": "Q02",
@@ -13,7 +13,7 @@
     "difficulty": "complexe",
     "question": "Pourquoi certains fans pensent-ils qu'une finale entre les Pacers et le Thunder pourrait être moins suivie ?",
     "reference": "Certains commentateurs évoquent principalement la taille plus faible des marchés d'Indiana et d'Oklahoma City, l'absence de très grandes stars bénéficiant d'une forte notoriété auprès du grand public et la manière dont la NBA et les médias font leur promotion. D'autres contestent cette idée et estiment que la qualité du basket et la compétitivité de la série peuvent suffire à la rendre intéressante.",
-    "expected_source": "commentateurs_2.pdf"
+    "expected_source": "Reddit 2.pdf"
   },
   {
     "id": "Q03",
@@ -21,7 +21,7 @@
     "difficulty": "complexe",
     "question": "Pourquoi Reggie Miller est-il présenté comme une première option particulièrement efficace en playoffs ?",
     "reference": "La discussion s'appuie principalement sur son True Shooting relatif, qui montre une forte efficacité au scoring par rapport à la moyenne de son époque. Les commentateurs soulignent aussi son jeu sans ballon et sa capacité à produire efficacement en playoffs, tout en débattant de la pertinence de le considérer comme une véritable première option comparable aux plus grandes stars.",
-    "expected_source": "commentateurs_3.pdf"
+    "expected_source": "Reddit 3.pdf"
   },
   {
     "id": "Q04",
@@ -29,7 +29,7 @@
     "difficulty": "complexe",
     "question": "Une équipe NBA a-t-elle déjà joué les trois premiers tours sans avantage du terrain avant de l'obtenir en Finales ?",
     "reference": "D'après les commentaires du corpus, cela ne semble jamais s'être produit en NBA. Plusieurs équipes ont atteint les Finales sans avantage du terrain, comme les Rockets de 1995 ou les Knicks de 1999, mais elles ne l'ont pas ensuite obtenu en Finales.",
-    "expected_source": "commentateurs_4.pdf"
+    "expected_source": "Reddit 4.pdf"
   },
   {
     "id": "Q05",
@@ -37,7 +37,7 @@
     "difficulty": "simple",
     "question": "pk les wolves ont impressioné pendant les playoff ?",
     "reference": "Les commentateurs mettent notamment en avant leur intensité physique, leur défense, leur profondeur d'effectif et leur jeu collectif. Anthony Edwards est régulièrement cité, tandis que Julius Randle reçoit aussi des éloges pour son apport offensif et son implication défensive.",
-    "expected_source": "commentateurs_1.pdf"
+    "expected_source": "Reddit 1.pdf"
   },
   {
     "id": "Q06",
@@ -53,7 +53,7 @@
     "difficulty": "simple",
     "question": "Quel joueur ayant tenté au moins 100 tirs à 3 points possède le meilleur pourcentage de réussite à 3 points ?",
     "reference": "Seth Curry possède le meilleur pourcentage de réussite à 3 points parmi les joueurs ayant tenté au moins 100 tirs à 3 points, avec 45,6 % sur 184 tentatives.",
-    "expected_source": "regular NBA (2).xlsx"
+    "expected_source": "regular NBA.xlsx"
   },
   {
     "id": "Q08",
@@ -61,7 +61,7 @@
     "difficulty": "simple",
     "question": "Quel joueur ayant disputé au moins 50 matchs possède le meilleur True Shooting Percentage ?",
     "reference": "Jarrett Allen possède le meilleur True Shooting Percentage parmi les joueurs ayant disputé au moins 50 matchs, avec 72,4 % en 82 matchs.",
-    "expected_source": "regular NBA (2).xlsx"
+    "expected_source": "regular NBA.xlsx"
   },
   {
     "id": "Q09",
@@ -69,7 +69,7 @@
     "difficulty": "complexe",
     "question": "Quels sont les cinq joueurs ayant tenté au moins 100 tirs à 3 points avec le meilleur pourcentage de réussite à 3 points ?",
     "reference": "Les cinq meilleurs sont Seth Curry avec 45,6 %, Zach LaVine avec 44,6 %, Taurean Prince avec 43,9 %, Ty Jerome avec 43,9 % et Vít Krejčí avec 43,7 %.",
-    "expected_source": "regular NBA (2).xlsx"
+    "expected_source": "regular NBA.xlsx"
   },
   {
     "id": "Q10",
@@ -77,7 +77,7 @@
     "difficulty": "complexe",
     "question": "Parmi les joueurs ayant disputé au moins 50 matchs, quels sont les cinq joueurs ayant le meilleur NETRTG ?",
     "reference": "Les cinq joueurs ayant le meilleur NETRTG sont Shai Gilgeous-Alexander avec 16,7, Isaiah Joe avec 15,8, Alex Caruso avec 15,0, Luke Kornet avec 14,9 et Kenrich Williams avec 14,5.",
-    "expected_source": "regular NBA (2).xlsx"
+    "expected_source": "regular NBA.xlsx"
   },
   {
     "id": "Q11",
@@ -85,7 +85,7 @@
     "difficulty": "complexe",
     "question": "Quels joueurs des Minnesota Timberwolves sont mis en avant par les commentateurs et que montrent leurs statistiques individuelles disponibles ?",
     "reference": "Les commentateurs mettent notamment en avant Anthony Edwards et Julius Randle. Dans les données statistiques, Anthony Edwards totalise 2180 points, 450 rebonds et 356 passes en 79 matchs, avec 39,5 % à trois points, un TS% de 59,5 et un NETRTG de +4,8. Julius Randle totalise 1290 points, 490 rebonds et 324 passes en 69 matchs, avec un TS% de 59,3 et un NETRTG de +3,4.",
-    "expected_source": "commentateurs_1.pdf + regular NBA (2).xlsx"
+    "expected_source": "Reddit 1.pdf + regular NBA.xlsx"
   },
   {
     "id": "Q12",
@@ -93,6 +93,6 @@
     "difficulty": "complexe",
     "question": "Quels joueurs du Orlando Magic sont mis en avant par les commentateurs et que montrent leurs statistiques individuelles disponibles ?",
     "reference": "Les commentateurs mettent notamment en avant Paolo Banchero et Franz Wagner, tout en évoquant les difficultés offensives du Magic. Dans les données statistiques, Franz Wagner totalise 1452 points, 342 rebonds et 282 passes en 60 matchs, avec un TS% de 55,8 et un NETRTG de +6,0. Paolo Banchero totalise 1191 points, 345 rebonds et 221 passes en 46 matchs, avec un TS% de 55,1 et un NETRTG de -0,6.",
-    "expected_source": "commentateurs_1.pdf + regular NBA (2).xlsx"
+    "expected_source": "Reddit 1.pdf + regular NBA.xlsx"
   }
 ]
